@@ -14,6 +14,7 @@ class Scrapper:
         return {
             'name': url.split('/')[-1],
             'users': Scrapper.parse_users(soup),
+            'url': url,
         }
 
     @staticmethod
