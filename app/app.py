@@ -24,8 +24,8 @@ class App:
 
     def _process_chat(self, chat, index):
         Logger.log(f"Processing chat {index}", is_debug=False)
-        affiliations = [Scrapper.scrape_affiliation(url) for url in chat['affiliation_urls']]
+        affiliations = [Scrapper.scrape_affiliation(affiliation['url']) for affiliation in chat['affiliations']]
         for affiliation in affiliations:
             for job in self.jobs:
-                job.do(chat['chat_id'], self.database.get_affiliation(affiliation['name']), affiliation)
-                self.database.save_affiliation(affiliation)
+                job.do(chat['chat_id'], self.database.get_affiliation(chat['chat_id'], affiliation['name']), affiliation)
+        self.database.save_chat(chat['chat_id'], affiliations)

@@ -19,25 +19,19 @@ class KatStalkerDb:
     def get_chats(self):
         return self.db['chats'].find({})
 
-    def get_affiliations(self):
-        return self.db['affiliations'].find({})
+    def get_affiliations(self, chat_id):
+        return self.db['chats'].find_one({'chat_id': chat_id})['affiliations']
 
-    def get_affiliation(self, name):
-        return self.db['affiliations'].find_one({'name': name})
+    def get_affiliation(self, chat_id, name):
+        for affiliation in self.get_affiliations(chat_id):
+            if affiliation['name'] == name: return affiliation
 
-
-    def _insert_affiliation(self, affiliation):
-        self.db["affiliations"].insert_one(affiliation)
-
-    def _update_affiliation(self, affiliation):
-        self.db["affiliations"].update_one(
-            {'name': affiliation['name']},
-            {'$set': affiliation}
-        )
-
-    def save_affiliation(self, affiliation):
+    def save_chat(self, chat_id, affiliations):
         Logger.log('Saving affiliation data in DB')
-        db_affiliation = self.get_affiliation(affiliation['name'])
-        if db_affiliation is None: self._insert_affiliation(affiliation)
-        else: self._update_affiliation(affiliation)
+        self.db["chats"].update_one(
+            {'chat_id': chat_id},
+            {'$set': {
+                'affiliations': affiliations
+            }}
+        )
 
