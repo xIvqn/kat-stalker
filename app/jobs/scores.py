@@ -55,4 +55,4 @@ class Scores(Job):
         if msg_type == 'new':
             return f"✅ {name} se ha inscrito en el [ranking](https://open.kattis.com/affiliation/{update['affiliation']}) con una puntuación de {update['current']['score']} puntos."
         elif msg_type == 'win' or msg_type == 'lose':
-            return f"‼️ {name} ha {'ganado' if msg_type == 'win' else 'perdido'} {abs(update['current']['score'] - update['previous']['score'])} puntos.\n\nPosición actual: {'↗️ ' if update['current']['rank'] > update['previous']['rank'] else '↗↘️ ' if update['current']['rank'] > update['previous']['rank'] else ''} {update['current']['rank']} ({update['current']['score']} puntos)."
+            return f"‼️ {name} ha {'ganado' if msg_type == 'win' else 'perdido'} {abs(update['current']['score'] - update['previous']['score'])} puntos.\n\nPosición actual: {'↗️ ' if update['current']['rank'] > update['previous']['rank'] else '↗↘️ ' if update['current']['rank'] > update['previous']['rank'] else ''} {update['current']['rank']} \({update['current']['score']} puntos\)."
