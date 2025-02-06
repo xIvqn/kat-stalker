@@ -27,9 +27,9 @@ class Scores(Job):
                     'previous': user_previous,
                     'current': user_current,
                 }
-                if user_previous['score'] > user_current['score']:
+                if user_previous['score'] < user_current['score']:
                     updates['win'].append(update)
-                elif user_previous['score'] < user_current['score']:
+                elif user_previous['score'] > user_current['score']:
                     updates['lose'].append(update)
 
         Logger.log(f"Obtained: {len(updates['new'])} new users, {len(updates['win'])} wins, {len(updates['lose'])} loses.")
@@ -55,4 +55,4 @@ class Scores(Job):
         if msg_type == 'new':
             return f"✅ {name} se ha inscrito en el [ranking](https://open.kattis.com/affiliation/{update['affiliation']}) con una puntuación de {update['current']['score']} puntos."
         elif msg_type == 'win' or msg_type == 'lose':
-            return f"‼️ {name} ha {'ganado' if msg_type == 'win' else 'perdido'} {abs(update['current']['score'] - update['previous']['score'])} puntos.\n\nPosición actual: {'↗️ ' if update['current']['rank'] > update['previous']['rank'] else '↗↘️ ' if update['current']['rank'] > update['previous']['rank'] else ''} {update['current']['rank']} \({update['current']['score']} puntos\)."
+            return f"‼️ {name} ha {'ganado' if msg_type == 'win' else 'perdido'} {round(abs(update['current']['score'] - update['previous']['score']), 2)} puntos.\n\nPosición actual: {'↗️ ' if update['current']['rank'] > update['previous']['rank'] else '↗↘️ ' if update['current']['rank'] > update['previous']['rank'] else ''} {update['current']['rank']} \({update['current']['score']} puntos\)."
