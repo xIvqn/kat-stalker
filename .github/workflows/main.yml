@@ -1,0 +1,28 @@
+name: Scheduled run
+
+on:
+  push:
+    branches:
+      - main
+    
+  schedule:
+    - cron: '* * * * *'
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install -r requirements.txt
+      - name: Run script
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_URI: ${{ secrets.DATABASE_URI }}
+          JOBS: ${{ vars.JOBS }}
+        working-directory: ./app
+        run: python3 main.py
