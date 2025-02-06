@@ -31,12 +31,13 @@ class KatStalkerDb:
 
     def _update_affiliation(self, affiliation):
         self.db["affiliations"].update_one(
-            {'_id': ObjectId(affiliation['_id'])},
+            {'name': affiliation['name']},
             {'$set': affiliation}
         )
 
     def save_affiliation(self, affiliation):
         Logger.log('Saving affiliation data in DB')
-        if affiliation.get('_id', None) is None: self._insert_affiliation(affiliation)
+        db_affiliation = self.get_affiliation(affiliation['name'])
+        if db_affiliation is None: self._insert_affiliation(affiliation)
         else: self._update_affiliation(affiliation)
 
