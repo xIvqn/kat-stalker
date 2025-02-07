@@ -16,7 +16,8 @@ class Telegram:
         message = escape(message)\
             .replace('.', '\\.')\
             .replace('-', '\\-')\
-            .replace('_', '\\_')
+            .replace('_', '\\_')\
+            .replace('*', '\\*')
         url = f'https://api.telegram.org/bot{self.token}/sendMessage?chat_id={chat_id}&text={message}&parse_mode=MarkdownV2'
         response = requests.get(url)
         if response.status_code != 200:
