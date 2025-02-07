@@ -1,9 +1,12 @@
+import os
+
 from jobs.job import Job
 from logger import Logger
 from telegram import Telegram
 
 
 _telegram = Telegram()
+LOSE_SCORE = True if os.environ.get("LOSE_SCORE", "1") == "1" else False
 
 class Scores(Job):
 
@@ -30,7 +33,7 @@ class Scores(Job):
                 if user_previous['score'] < user_current['score']:
                     updates['win'].append(update)
                 elif user_previous['score'] > user_current['score']:
-                    updates['lose'].append(update)
+                    if LOSE_SCORE: updates['lose'].append(update)
 
         Logger.log(f"Obtained: {len(updates['new'])} new users, {len(updates['win'])} wins, {len(updates['lose'])} loses.")
         Logger.log("Sending updates to telegram chat.")
