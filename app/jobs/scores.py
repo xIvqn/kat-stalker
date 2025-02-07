@@ -1,4 +1,5 @@
 import os
+import sys
 
 from jobs.job import Job
 from logger import Logger
@@ -39,7 +40,10 @@ class Scores(Job):
         Logger.log("Sending updates to telegram chat.")
         for update_type, updates_ in updates.items():
             for update in updates_:
-                _telegram.send(chat_id, Scores._get_message(update, update_type))
+                try:
+                    _telegram.send(chat_id, Scores._get_message(update, update_type))
+                except Exception as e:
+                    print(f"Failed to send update from {update['current']['nickname']}: {e}", file=sys.stderr)
 
     @staticmethod
     def _get_user_data(nickname, affiliation):
