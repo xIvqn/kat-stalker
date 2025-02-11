@@ -17,6 +17,7 @@ def parse_args():
     parser.add_argument("-s", "--summary", action="store_true", help="Enable summary mode")
     parser.add_argument("--lose-score", action="store_true", help="Send lose score messages")
     parser.add_argument("--join-msg", action="store_true", help="Send join messages")
+    parser.add_argument("-t", "--threshold", type=float, default=1.0, help="Threshold for score messages. If change is lower than this, score updates will not be sent.")
 
     _args = parser.parse_args()
 

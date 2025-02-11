@@ -15,7 +15,7 @@ class Scores(Job):
         args = parser.parse_args()
 
         Logger.log(f"Executing Scores job for affiliation {current['name']}")
-        updates = Scores.build_updates(args.join_msg, args.lose_score, current, previous)
+        updates = Scores.build_updates(args.join_msg, args.lose_score, args.threshold, current, previous)
 
         Logger.log(f"Obtained: {len(updates['new'])} new users, {len(updates['win'])} wins, {len(updates['lose'])} loses.")
         Logger.log(f"Sending updates to telegram chat as {'summary' if args.summary else 'individual'}.")
@@ -40,7 +40,7 @@ class Scores(Job):
             print(f"Failed to send summary to {chat_id}: {e}", file=sys.stderr)
 
     @staticmethod
-    def build_updates(join_msg, lose_score, current, previous):
+    def build_updates(join_msg, lose_score, threshold, current, previous):
         updates = {
             'new': [],
             'win': [],
@@ -59,7 +59,9 @@ class Scores(Job):
                     'previous': user_previous,
                     'current': user_current,
                 }
-                if user_previous['score'] < user_current['score']:
+                if abs(user_previous['score'] - user_current['score']) < threshold:
+                    continue
+                elif user_previous['score'] < user_current['score']:
                     updates['win'].append(update)
                 elif user_previous['score'] > user_current['score']:
                     if lose_score: updates['lose'].append(update)
@@ -82,7 +84,7 @@ class Scores(Job):
         if msg_type == 'new':
             return f"✅ {name} se ha inscrito en el [ranking](https://open.kattis.com/affiliation/{update['affiliation']}) con una puntuación de {update['current']['score']} puntos."
         elif msg_type == 'win' or msg_type == 'lose':
-            return f"{'🤩' if msg_type == 'win' else '🙁'} {name} ha {'ganado' if msg_type == 'win' else 'perdido'} {round(abs(update['current']['score'] - update['previous']['score']), 2)} puntos\!\n\nPosición actual: {'⬆️ ' if update['current']['rank'] > update['previous']['rank'] else '⬇️ ' if update['current']['rank'] > update['previous']['rank'] else ''} {update['current']['rank']} \({update['current']['score']} puntos\)."
+            return f"{'🤩' if msg_type == 'win' else '🙁'} {name} ha {'ganado' if msg_type == 'win' else 'perdido'} {round(abs(update['current']['score'] - update['previous']['score']), 2)} puntos\!\n\nPosición actual: {'⬆️ ' if update['current']['rank'] > update['previous']['rank'] else '⬇️ ' if update['current']['rank'] > update['previous']['rank'] else ''}{update['current']['rank']} \({update['current']['score']} puntos\)."
 
     @staticmethod
     def _get_summary_message(updates):
